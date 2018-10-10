@@ -27,7 +27,6 @@ module.exports ={
 
         ctx.socket.socket.join(newRoom.name);
         return {
-            _id: newRoom._id,
             name: newRoom.name,
             createTime: newRoom.createTime,
             creator: newRoom.creator,
@@ -35,34 +34,31 @@ module.exports ={
     },
 
     async joinRoom(ctx) {
-        // const { rid } = ctx.data;
+        const { name } = ctx.data;
 
-        // const room = await Room.findOne({ _id: groupId });
-        // assert(group, '加入群组失败, 群组不存在');
-        // assert(group.members.indexOf(ctx.socket.user) === -1, '你已经在群组中');
+        const room = await Room.findOne({ name });
+        assert(room, 'Room does not exists');
+        assert(room.members.indexOf(ctx.socket._id) === -1, 'You have already joined the room');
 
-        // group.members.push(ctx.socket.user);
-        // await group.save();
+        room.members.push(ctx.socket._id);
+        await room.save();
 
-        // const messages = await Message
-        //     .find(
-        //         { toGroup: groupId },
-        //         { type: 1, content: 1, from: 1, createTime: 1 },
-        //         { sort: { createTime: -1 }, limit: 3 },
-        //     )
-        //     .populate('from', { username: 1, avatar: 1 });
-        // messages.reverse();
+        const messages = await Message
+            .find(
+                { toGroup: groupId },
+                { type: 1, content: 1, from: 1, createTime: 1 },
+                { sort: { createTime: -1 }, limit: 3 },
+            )
+            .populate('from', { uid: 1});
+        messages.reverse();
 
-        // ctx.socket.socket.join(group._id);
+        ctx.socket.socket.join(name);
 
-        // return {
-        //     _id: group._id,
-        //     name: group.name,
-        //     avatar: group.avatar,
-        //     createTime: group.createTime,
-        //     creator: group.creator,
-        //     messages,
-        // };
-        return 1;
+        return {
+            name: room.name,
+            createTime: room.createTime,
+            creator: room.creator,
+            messages,
+        };
     },
 }
