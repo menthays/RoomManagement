@@ -5,21 +5,23 @@ const { Schema } = mongoose;
 const RoomSchema = new Schema({
     createTime: { type: Date, default: Date.now },
 
-    name: {
+    rid: {
         type: String,
         trim: true,
         unique: true,
         match: /^[0-9a-zA-Z]{1,8}$/,
         index: true,
     },
+    
     creator: {
         type: Schema.Types.ObjectId,
-        ref: 'Socket',
+        ref: 'Conn',
     },
+
     members: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Socket',
+            ref: 'Conn',
         },
     ],
 });

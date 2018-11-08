@@ -13,13 +13,14 @@ module.exports = function (io, _io, routes) {
     return async (ctx) => {
         if (routes[ctx.event]) {
             const { event, data, socket } = ctx;
-            ctx.res = await routes[ctx.event]({
+            let result = await routes[ctx.event]({
                 event,
                 data,
                 socket,
                 io,
                 _io,
             });
+            ctx.res = result
         }
     };
 };

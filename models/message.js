@@ -7,7 +7,7 @@ const MessageSchema = new Schema({
 
     from: {
         type: Schema.Types.ObjectId,
-        ref: 'Socket',
+        ref: 'Conn',
     },
     to: {
         type: String,

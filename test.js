@@ -2,7 +2,25 @@ const io = require('socket.io-client');
 
 const roomService = io('http://localhost:9200')
 
-roomService.on('connect', () => {
-    roomService.emit('createRoom', {name: 'testcyy'})
+function fetch(event, data = {}, {
+    toast = true,
+} = {}) {
+    return new Promise((resolve) => {
+        roomService.emit(event, data, (res) => {
+            if (typeof res === 'string') {
+                if (toast) {
+                    console.error(res);
+                }
+                resolve([res, null]);
+            } else {
+                resolve([null, res]);
+            }
+        });
+    });
+}
+
+
+roomService.on('connect', async () => {
+    let a = await fetch('createRoom', ({rid: 'kkyy'}))
 })
 
